@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,20 +19,33 @@ import org.springframework.web.bind.annotation.RestController;
 import es.ejercicio.microservicios.autores.entity.Autor;
 import es.ejercicio.microservicios.autores.service.AutorService;
 import es.ejercicio.microservicios.dto.AutorDTO;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 @RestController
+@RefreshScope
 @RequestMapping(value = "/autores/")
 public class AutorController {
 
+	@Value("${mensaje.bienvenida}")
+	@Getter private String sMensaje;
 
     @Autowired
     private AutorService autorService;
 
     /** DozerMapper. */
     DozerBeanMapper mapper = new DozerBeanMapper();
+
+    /**
+     * Retorna el mensaje del fichero de propiedades
+     * @return sMensaje
+     */
+    @RequestMapping(value = "/getMensaje", method = RequestMethod.GET)
+    public String getMensaje()  {
+       return sMensaje;
+    }
 
     /**
      * Retorna todos los autores
