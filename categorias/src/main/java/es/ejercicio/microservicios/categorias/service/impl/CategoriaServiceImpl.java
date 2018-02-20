@@ -2,7 +2,10 @@ package es.ejercicio.microservicios.categorias.service.impl;
 
 import java.util.List;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import es.ejercicio.microservicios.categorias.entity.Categoria;
@@ -19,6 +22,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
 
 	@Override
+	@Cacheable(value = "categorias")
 	public List<Categoria> findAll() {
 		log.debug("Se obtienen todas las categorias.");
 		return categoriaRepository.findAll();
@@ -26,6 +30,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
 
 	@Override
+	@Cacheable(value = "categoria", key = "#id")
 	public Categoria findById(Integer id) {
 		log.debug("Se obtiene la categoria con id:" + id);
 		return categoriaRepository.findOne(id);
