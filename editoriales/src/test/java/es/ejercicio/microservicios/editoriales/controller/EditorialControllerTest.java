@@ -93,7 +93,7 @@ public class EditorialControllerTest {
 	}
 
 	@Test
-	public void testAutorPorId() {
+	public void testEditorialPorId() {
 
 		Editorial editorial = Editorial.builder().id(1).nombre("Editorial 1").build();
 
