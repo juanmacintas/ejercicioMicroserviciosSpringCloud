@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import es.ejercicio.microservicios.autores.entity.Autor;
 import es.ejercicio.microservicios.autores.service.AutorService;
 import es.ejercicio.microservicios.dto.AutorDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RefreshScope
+@Api(value = "AutorController", description="Operaciones sobre los Autores de los libros de la Biblioteca")
 @RequestMapping(value = "/autores/")
 public class AutorController {
 
@@ -43,6 +49,8 @@ public class AutorController {
      * @return sMensaje
      */
     @RequestMapping(value = "/getMensaje", method = RequestMethod.GET)
+    @ApiOperation("Retorna el valor de la propiedad mensaje.bienvenida del fichero de configuración")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Mensaje retornado correctamente", response = String.class)})
     public String getMensaje()  {
        return sMensaje;
     }
@@ -53,6 +61,11 @@ public class AutorController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todos los autores",
+    			  notes = "Retorna todos los autores almacenados en base de datos",
+    			  response = AutorDTO.class,
+    			  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Autores retornados correctamente")})
     public List<AutorDTO> getAll() throws SQLException {
 
     	List<Autor> autores = autorService.findAll();
@@ -75,7 +88,13 @@ public class AutorController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getAutor/{id}", method = RequestMethod.GET)
-    public ResponseEntity<AutorDTO> getAutor(@PathVariable("id") String id) throws SQLException {
+    @ApiOperation(value = "Retorna un Autor",
+	  notes = "Retorna el Autor del id especificado",
+	  response = AutorDTO.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Autor no encontrado"),
+    					   @ApiResponse(code = 200, message = "Autor encontrado")}
+    						)
+    public ResponseEntity<AutorDTO> getAutor(@ApiParam(name = "id", value = "Id del Autor a buscar", required = true) @PathVariable("id") String id) throws SQLException {
     	Integer idAutor = 0;
     	try
     	{
@@ -85,9 +104,14 @@ public class AutorController {
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AutorDTO());
     	}
     	Autor editorial = autorService.findById(idAutor);
-    	AutorDTO editorialDTO= (AutorDTO) mapper.map(editorial, AutorDTO.class);
+    	if (editorial != null)
+    	{
+    		AutorDTO editorialDTO= (AutorDTO) mapper.map(editorial, AutorDTO.class);
 
-       	return ResponseEntity.status(HttpStatus.OK).body(editorialDTO);
+    		return ResponseEntity.status(HttpStatus.OK).body(editorialDTO);
+    	} else {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AutorDTO());
+    	}
 
     }
 
@@ -96,7 +120,10 @@ public class AutorController {
      * @throws SQLException
      */
     @RequestMapping(value = "/deleteAutor/{id}", method = RequestMethod.DELETE)
-    public HttpStatus deleteAutor(@PathVariable("id") String id) throws SQLException {
+    @ApiOperation(value = "Elimina un Autor",
+    			notes = "Elimina el Autor del id especificado",
+    		  response = HttpStatus.class)
+    public HttpStatus deleteAutor(@ApiParam(name = "id", value = "Id del Autor a eliminar", required = true)@PathVariable("id") String id) throws SQLException {
     	Integer idAutor = 0;
     	try
     	{
@@ -117,7 +144,8 @@ public class AutorController {
      * @throws SQLException
      */
     @RequestMapping(value = "/nuevoAutor", method = RequestMethod.POST)
-    public ResponseEntity<AutorDTO> nuevoAutor(@RequestBody AutorDTO input) throws SQLException {
+    @ApiOperation("Inserta o actualiza en base de datos un Autor")
+    public ResponseEntity<AutorDTO> nuevoAutor(@ApiParam(name = "autorDTO", value = "Autor a insertar/actualizar", required = true) @RequestBody AutorDTO input) throws SQLException {
     	log.debug("Se intenta insertar el autor:" + input);
 
     	Autor autor = Autor.builder().id(input.getId())

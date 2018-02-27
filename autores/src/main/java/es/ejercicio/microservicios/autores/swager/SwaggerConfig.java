@@ -33,9 +33,9 @@ public class SwaggerConfig {
 
 	private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-            .title("Demo Spring Boot API")
-            .description("API documentation for Spring Boot demo")
-            .contact(new Contact("name", "url", "email"))
+            .title("Biblioteca - Autores")
+            .description("API documentation for Autores Application")
+            .contact(new Contact("Juan Manuel Cintas", "https://github.com/juanmacintas", "hurone@gmail.com"))
             .license("Apache License Version 2.0")
             .licenseUrl("https://github.com/springfox/springfox/blob/master/LICENSE")
             .version("2.0")

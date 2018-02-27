@@ -77,8 +77,8 @@ public class AutoresControllerTestIT {
 
 		Gson gson = new Gson();
 
-		AutorDTO autor = AutorDTO.builder().id(6)
-						.nombre("Autor 6")
+		AutorDTO autor = AutorDTO.builder().id(30)
+						.nombre("Autor 30")
 						.build();
 		String json = gson.toJson(autor);
 
@@ -90,7 +90,7 @@ public class AutoresControllerTestIT {
 	    		 AutorDTO.class);
 
 	     assertEquals(STATUS_OK, response.getStatusCode().toString());
-	     assertEquals(6,response.getBody().getId());
+	     assertEquals(30,response.getBody().getId());
 
 	     testSelectAll(total + 1);
 
