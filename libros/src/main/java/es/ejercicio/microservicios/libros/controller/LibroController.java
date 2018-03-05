@@ -14,12 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import es.ejercicio.microservicios.dto.LibroDTO;
 import es.ejercicio.microservicios.libros.entity.Libro;
 import es.ejercicio.microservicios.libros.service.LibroService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/libros/")
+@Api(value = "LibroController", description="Operaciones sobre los Libros de la Biblioteca")
 class LibroController {
 
 
@@ -35,6 +41,11 @@ class LibroController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todos los libros",
+	  notes = "Retorna todos los libros almacenados en base de datos",
+	  response = LibroDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Libros retornadas correctamente")})
     public List<LibroDTO> getAll() throws SQLException {
 
     	List<Libro> libros = libroService.findAll();
@@ -59,6 +70,11 @@ class LibroController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getFavoritos", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todos los libros favoritos",
+	  notes = "Retorna todos los libros favoritos almacenados en base de datos",
+	  response = LibroDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Libros retornadas correctamente")})
     public List<LibroDTO> getFavoritos() throws SQLException {
 
     	List<Libro> libros = libroService.findByFavoriteTrue();
@@ -81,7 +97,12 @@ class LibroController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getByExample", method = RequestMethod.POST)
-    public List<LibroDTO> librosByExample(@RequestBody LibroDTO input) throws SQLException {
+    @ApiOperation(value = "Retorna todos los libros que coinciden con el DTO de Ejemplo",
+	  notes = "Retorna todos los libros coincidentes con el ejemplo almacenados en base de datos",
+	  response = LibroDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Libros retornadas correctamente")})
+    public List<LibroDTO> librosByExample(@ApiParam(name = "libroDTO", value = "Libro ejemplo para la consulta", required = true)@RequestBody LibroDTO input) throws SQLException {
     	log.debug("Se obtienen los libros coincidentes con:" + input);
 
     	Libro libroInput = Libro.builder().id(null)

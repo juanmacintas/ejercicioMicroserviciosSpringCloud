@@ -14,15 +14,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.ejercicio.microservicios.dto.AutorDTO;
 import es.ejercicio.microservicios.dto.CategoriaDTO;
 import es.ejercicio.microservicios.dto.EditorialDTO;
 import es.ejercicio.microservicios.editoriales.entity.Editorial;
 import es.ejercicio.microservicios.editoriales.service.EditorialService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/editoriales/")
+@Api(value = "EditorialController", description="Operaciones sobre las Editoriales de los libros de la Biblioteca")
 public class EditorialController {
 
 
@@ -38,6 +45,11 @@ public class EditorialController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todos las editoriales",
+	  notes = "Retorna todos las editoriales almacenados en base de datos",
+	  response = EditorialDTO.class,
+	  responseContainer = "List")
+@ApiResponses(value = {@ApiResponse(code = 200, message = "Editoriales retornadas correctamente")})
     public List<EditorialDTO> getAll() throws SQLException {
 
     	List<Editorial> editoriales = editorialService.findAll();
@@ -60,7 +72,13 @@ public class EditorialController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getEditorial/{id}", method = RequestMethod.GET)
-    public ResponseEntity<EditorialDTO> getEditorial(@PathVariable("id") String id) throws SQLException {
+    @ApiOperation(value = "Retorna una Editorial",
+	  notes = "Retorna la Editorial del id especificado",
+	  response = AutorDTO.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Editorial no encontrada"),
+    					   @ApiResponse(code = 200, message = "Editorial encontrada")}
+    						)
+    public ResponseEntity<EditorialDTO> getEditorial(@ApiParam(name = "id", value = "Id del Autor a buscar", required = true)@PathVariable("id") String id) throws SQLException {
     	Integer idEditorial = 0;
     	try
     	{
@@ -70,9 +88,16 @@ public class EditorialController {
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new EditorialDTO());
     	}
     	Editorial editorial = editorialService.findById(idEditorial);
-       	EditorialDTO editorialDTO= (EditorialDTO) mapper.map(editorial, EditorialDTO.class);
 
-       	return ResponseEntity.status(HttpStatus.OK).body(editorialDTO);
+    	if (editorial != null)
+    	{
+    		EditorialDTO editorialDTO= (EditorialDTO) mapper.map(editorial, EditorialDTO.class);
+
+    		return ResponseEntity.status(HttpStatus.OK).body(editorialDTO);
+    	} else {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new EditorialDTO());
+    	}
+
 
     }
 
@@ -81,7 +106,10 @@ public class EditorialController {
      * @throws SQLException
      */
     @RequestMapping(value = "/deleteEditorial/{id}", method = RequestMethod.DELETE)
-    public HttpStatus deleteEditorial(@PathVariable("id") String id) throws SQLException {
+    @ApiOperation(value = "Elimina una Editorial",
+			notes = "Elimina la Editorial del id especificado",
+			response = HttpStatus.class)
+    public HttpStatus deleteEditorial(@ApiParam(name = "id", value = "Id del Autor a eliminar", required = true)@PathVariable("id") String id) throws SQLException {
     	Integer idAutor = 0;
     	try
     	{
@@ -101,7 +129,8 @@ public class EditorialController {
      * @throws SQLException
      */
     @RequestMapping(value = "/nuevaEditorial", method = RequestMethod.POST)
-    public ResponseEntity<EditorialDTO> nuevaEditorial(@RequestBody CategoriaDTO input) throws SQLException {
+    @ApiOperation("Inserta o actualiza en base de datos una Editorial")
+    public ResponseEntity<EditorialDTO> nuevaEditorial(@ApiParam(name = "editorialDTO", value = "Editorial a insertar/actualizar", required = true)@RequestBody CategoriaDTO input) throws SQLException {
     	log.debug("Se intenta insertar la editorial:" + input);
 
     	Editorial editorial = Editorial.builder().id(input.getId())

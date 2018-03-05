@@ -21,11 +21,17 @@ import es.ejercicio.microservicios.dto.CategoriaDTO;
 import es.ejercicio.microservicios.dto.EditorialDTO;
 import es.ejercicio.microservicios.dto.LibroBibliotecaDTO;
 import es.ejercicio.microservicios.dto.LibroDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/biblioteca/")
+@Api(value = "BibliotecaController", description="Operaciones sobre la Biblioteca")
 public class BibliotecaController {
 
 
@@ -50,6 +56,11 @@ public class BibliotecaController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todos los libros",
+	  notes = "Retorna todos los libros almacenados en base de datos",
+	  response = LibroBibliotecaDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Libros retornadas correctamente")})
     public List<LibroBibliotecaDTO> getAll() throws SQLException {
 
 
@@ -63,6 +74,11 @@ public class BibliotecaController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getAllFavoritos", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todos los libros favoritos",
+	  notes = "Retorna todos los libros favoritos almacenados en base de datos",
+	  response = LibroBibliotecaDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Libros retornadas correctamente")})
     public List<LibroBibliotecaDTO> getAllFavoritos() throws SQLException {
 
 
@@ -76,7 +92,10 @@ public class BibliotecaController {
      * @throws SQLException
      */
     @RequestMapping(value = "/deleteAutor/{id}", method = RequestMethod.DELETE)
-    public HttpStatus deleteAutor(@PathVariable("id") String id) throws SQLException {
+    @ApiOperation(value = "Elimina un Autor",
+	  notes = "Elimina el Autor del id especificado",
+	  response = HttpStatus.class)
+    public HttpStatus deleteAutor(@ApiParam(name = "id", value = "Id del Autor a eliminar", required = true)@PathVariable("id") String id) throws SQLException {
 
 
     	Integer idAutor = 0;
@@ -101,33 +120,32 @@ public class BibliotecaController {
     }
 
 
-    private List<LibroBibliotecaDTO> getListaBiblioteca(List<LibroDTO> listaBiblioteca) {
+	private List<LibroBibliotecaDTO> getListaBiblioteca(List<LibroDTO> listaBiblioteca) {
 
-    	List<LibroBibliotecaDTO> librosBiblioteca = new ArrayList<LibroBibliotecaDTO>();
-    	log.debug("Total de Libros Obtenidos:" + listaBiblioteca.size());
-    	for(LibroDTO libro : listaBiblioteca) {
-    		log.debug("Libro:" + libro);
-    		LibroBibliotecaDTO bibliotecaLibro = obtenerValoresLibro(libro);
-    		librosBiblioteca.add(bibliotecaLibro);
-    	}
-    	return librosBiblioteca;
-    }
+		List<LibroBibliotecaDTO> librosBiblioteca = new ArrayList<LibroBibliotecaDTO>();
+		log.debug("Total de Libros Obtenidos:" + listaBiblioteca.size());
+		for(LibroDTO libro : listaBiblioteca) {
+			log.debug("Libro:" + libro);
+			LibroBibliotecaDTO bibliotecaLibro = obtenerValoresLibro(libro);
+			librosBiblioteca.add(bibliotecaLibro);
+		}
+		return librosBiblioteca;
+	}
 
-  private LibroBibliotecaDTO obtenerValoresLibro(LibroDTO libro) {
-	log.debug("Se obtienen los datos del libro:" + libro);
-	CategoriaDTO categoria = controlCategorias.obtenerCategoria(libro.getCategoria().toString());
-	EditorialDTO editorial = controlEditoriales.obtenerEditorial(libro.getEditorial().toString());
-	AutorDTO autor = controlAutores.obtenerAutor(libro.getAutor().toString());
+	private LibroBibliotecaDTO obtenerValoresLibro(LibroDTO libro) {
+		log.debug("Se obtienen los datos del libro:" + libro);
+		CategoriaDTO categoria = controlCategorias.obtenerCategoria(libro.getCategoria().toString());
+		EditorialDTO editorial = controlEditoriales.obtenerEditorial(libro.getEditorial().toString());
+		AutorDTO autor = controlAutores.obtenerAutor(libro.getAutor().toString());
 
-	return LibroBibliotecaDTO.builder()
-						.id(libro.getId())
-						.titulo(libro.getTitulo())
-						.descripcion(libro.getDescripcion())
-						.categoria(categoria.getNombre())
-						.editorial(editorial.getNombre())
-						.autor(autor.getNombre())
-						.build();
-
+		return LibroBibliotecaDTO.builder()
+							.id(libro.getId())
+							.titulo(libro.getTitulo())
+							.descripcion(libro.getDescripcion())
+							.categoria(categoria.getNombre())
+							.editorial(editorial.getNombre())
+							.autor(autor.getNombre())
+							.build();
   }
 
 }

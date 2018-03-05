@@ -16,12 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import es.ejercicio.microservicios.categorias.entity.Categoria;
 import es.ejercicio.microservicios.categorias.service.CategoriaService;
+import es.ejercicio.microservicios.dto.AutorDTO;
 import es.ejercicio.microservicios.dto.CategoriaDTO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 @RestController
+@Api(value = "CategoriaController", description="Operaciones sobre las Categorías de los libros de la Biblioteca")
 @RequestMapping(value = "/categorias/")
 public class CategoriaController {
 
@@ -38,6 +45,11 @@ public class CategoriaController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todas las categorías",
+	  notes = "Retorna todos las categorías almacenados en base de datos",
+	  response = CategoriaDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Categorías retornados correctamente")})
     public List<CategoriaDTO> getAll() throws SQLException {
 
     	List<Categoria> categorias = categoriaService.findAll();
@@ -60,7 +72,13 @@ public class CategoriaController {
      * @throws SQLException
      */
     @RequestMapping(value = "/getCategoria/{id}", method = RequestMethod.GET)
-    public ResponseEntity<CategoriaDTO> getCategoria(@PathVariable("id") String id) throws SQLException {
+    @ApiOperation(value = "Retorna una Categoría",
+	  notes = "Retorna la Categoría del id especificado",
+	  response = CategoriaDTO.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Categoría no encontrada"),
+    					   @ApiResponse(code = 200, message = "Categoría encontrada")}
+    						)
+    public ResponseEntity<CategoriaDTO> getCategoria(@ApiParam(name = "id", value = "Id de la Categoría a buscar", required = true)@PathVariable("id") String id) throws SQLException {
     	Integer idAutor = 0;
     	try
     	{
@@ -70,9 +88,15 @@ public class CategoriaController {
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CategoriaDTO());
     	}
     	Categoria categoria = categoriaService.findById(idAutor);
-    	CategoriaDTO categoriaDTO= (CategoriaDTO) mapper.map(categoria, CategoriaDTO.class);
 
-       	return ResponseEntity.status(HttpStatus.OK).body(categoriaDTO);
+    	if (categoria != null)
+    	{
+    		CategoriaDTO categoriaDTO= (CategoriaDTO) mapper.map(categoria, CategoriaDTO.class);
+
+    		return ResponseEntity.status(HttpStatus.OK).body(categoriaDTO);
+    	} else {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CategoriaDTO());
+    	}
 
     }
 
@@ -81,7 +105,10 @@ public class CategoriaController {
      * @throws SQLException
      */
     @RequestMapping(value = "/deleteCategoria/{id}", method = RequestMethod.DELETE)
-    public HttpStatus deleteCategoria(@PathVariable("id") String id) throws SQLException {
+    @ApiOperation(value = "Elimina una Categoría",
+		notes = "Elimina la Categoría del id especificado",
+		response = HttpStatus.class)
+    public HttpStatus deleteCategoria(@ApiParam(name = "id", value = "Id de la Categoría a eliminar", required = true) @PathVariable("id") String id) throws SQLException {
     	Integer idAutor = 0;
     	try
     	{
@@ -101,7 +128,8 @@ public class CategoriaController {
      * @throws SQLException
      */
     @RequestMapping(value = "/nuevaCategoria", method = RequestMethod.POST)
-    public ResponseEntity<CategoriaDTO> nuevaCategoria(@RequestBody CategoriaDTO input) throws SQLException {
+    @ApiOperation("Inserta o actualiza en base de datos un Autor")
+    public ResponseEntity<CategoriaDTO> nuevaCategoria(@ApiParam(name = "categoriaDTO", value = "Categoría a insertar/actualizar", required = true)@RequestBody CategoriaDTO input) throws SQLException {
     	log.debug("Se intenta insertar la categoria:" + input);
 
     	Categoria categoria = Categoria.builder().id(input.getId())

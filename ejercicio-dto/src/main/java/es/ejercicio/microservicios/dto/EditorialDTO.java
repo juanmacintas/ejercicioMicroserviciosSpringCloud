@@ -1,5 +1,6 @@
 package es.ejercicio.microservicios.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,14 +17,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EditorialDTO {
 
-    /**
-     * Id.
-     */
+	@ApiModelProperty(notes = "ID de la Editorial. Clave primaria", required = true)
     private int id;
 
-    /**
-     * Nombre de la editorial.
-     */
+    @ApiModelProperty(notes = "Nombre de la Editorial")
     private String nombre;
 
 

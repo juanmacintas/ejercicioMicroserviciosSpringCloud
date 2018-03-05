@@ -1,5 +1,6 @@
 package es.ejercicio.microservicios.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,39 +17,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LibroDTO {
 
-    /**
-     * Id.
-     */
+	@ApiModelProperty(notes = "ID del Libro. Clave primaria", required = true)
     private int id;
 
-    /**
-     * Titulo del libro.
-     */
+	@ApiModelProperty(notes = "Título del Libro")
     private String titulo;
 
-    /**
-     * Descripcion.
-     */
+	@ApiModelProperty(notes = "Descripción del Libro")
     private String descripcion;
 
-    /**
-     * Categoria ID.
-     */
+	@ApiModelProperty(notes = "ID Categoría del Libro")
     private Integer categoria;
 
-    /**
-     * Autor ID.
-     */
+	@ApiModelProperty(notes = "ID Autor del Libro")
     private Integer autor;
 
-    /**
-     * Editorial ID.
-     */
+	@ApiModelProperty(notes = "ID Editorial del Libro")
     private Integer editorial;
 
-    /**
-     * Favorite
-     */
+	@ApiModelProperty(notes = "Indicador Favorito")
     private Boolean favorite;
 
 }

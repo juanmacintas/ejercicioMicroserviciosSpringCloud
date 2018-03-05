@@ -103,10 +103,10 @@ public class AutorController {
     		log.error("Se ha producido un error, el id no es un valor numerico:" + ex.getMessage());
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AutorDTO());
     	}
-    	Autor editorial = autorService.findById(idAutor);
-    	if (editorial != null)
+    	Autor autor = autorService.findById(idAutor);
+    	if (autor != null)
     	{
-    		AutorDTO editorialDTO= (AutorDTO) mapper.map(editorial, AutorDTO.class);
+    		AutorDTO editorialDTO= (AutorDTO) mapper.map(autor, AutorDTO.class);
 
     		return ResponseEntity.status(HttpStatus.OK).body(editorialDTO);
     	} else {
