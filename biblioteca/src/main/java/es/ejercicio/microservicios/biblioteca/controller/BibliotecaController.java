@@ -7,6 +7,7 @@ import java.util.List;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -115,6 +116,36 @@ public class BibliotecaController {
     	} else {
     		log.debug("No se puede eliminar el autor ya que tiene libros en la biblioteca.");
     		return HttpStatus.NOT_ACCEPTABLE;
+    	}
+
+    }
+
+
+    /**
+     * Elimina el Autor
+     * @throws SQLException
+     */
+    @RequestMapping(value = "/getLibro/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Obtiene el libro del id",
+	  notes = "Obtiene el Lirbo del id especificado",
+	  response = LibroBibliotecaDTO.class)
+    public ResponseEntity<LibroBibliotecaDTO> getLibro(@ApiParam(name = "id", value = "Id del Libro a buscar", required = true)@PathVariable("id") String id) throws SQLException {
+
+    	try
+    	{
+    		Integer idLibro = Integer.parseInt(id);
+    	} catch (NumberFormatException ex) {
+    		log.error("Se ha producido un error, el id no es un valor numerico:" + ex.getMessage());
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LibroBibliotecaDTO());
+    	}
+    	LibroDTO libroDTO = controlLibros.obtenerLibro(id);
+     	if (libroDTO != null)
+    	{
+     		LibroBibliotecaDTO bibliotecaLibro = obtenerValoresLibro(libroDTO);
+
+    		return ResponseEntity.status(HttpStatus.OK).body(bibliotecaLibro);
+    	} else {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LibroBibliotecaDTO());
     	}
 
     }
