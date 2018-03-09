@@ -8,6 +8,7 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +51,7 @@ public class EditorialController {
 	  response = EditorialDTO.class,
 	  responseContainer = "List")
 @ApiResponses(value = {@ApiResponse(code = 200, message = "Editoriales retornadas correctamente")})
-    public List<EditorialDTO> getAll() throws SQLException {
+    public List<EditorialDTO> getAll(Authentication authentication) throws SQLException {
 
     	List<Editorial> editoriales = editorialService.findAll();
        	List<EditorialDTO> editorialesDTO = new ArrayList<EditorialDTO>();
@@ -78,7 +79,7 @@ public class EditorialController {
     @ApiResponses(value = {@ApiResponse(code = 404, message = "Editorial no encontrada"),
     					   @ApiResponse(code = 200, message = "Editorial encontrada")}
     						)
-    public ResponseEntity<EditorialDTO> getEditorial(@ApiParam(name = "id", value = "Id del Autor a buscar", required = true)@PathVariable("id") String id) throws SQLException {
+    public ResponseEntity<EditorialDTO> getEditorial(Authentication authentication,@ApiParam(name = "id", value = "Id del Autor a buscar", required = true)@PathVariable("id") String id) throws SQLException {
     	Integer idEditorial = 0;
     	try
     	{
