@@ -11,4 +11,6 @@ public interface LibroService {
     public List<Libro> findAll();
 
     public List<Libro> findByExample(Libro libro);
+
+    public Libro findById(Integer id);
 }

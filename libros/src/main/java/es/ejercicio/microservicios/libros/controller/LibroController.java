@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -88,6 +91,42 @@ class LibroController {
 
     	}
         return librosDTO;
+
+    }
+
+
+    /**
+     * Retorna el libro del id
+     * @return Editorial
+     * @throws SQLException
+     */
+    @RequestMapping(value = "/getLibro/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna un Libro",
+	  notes = "Retorna el Libro del id especificado",
+	  response = LibroDTO.class)
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Libro no encontrado"),
+    					   @ApiResponse(code = 200, message = "Lirbo encontrado")}
+    						)
+    public ResponseEntity<LibroDTO> getLibro(@ApiParam(name = "id", value = "Id del Libro a buscar", required = true)@PathVariable("id") String id) throws SQLException {
+    	Integer idLibro = 0;
+    	try
+    	{
+    		idLibro = Integer.parseInt(id);
+    	} catch (NumberFormatException ex) {
+    		log.error("Se ha producido un error, el id no es un valor numerico:" + ex.getMessage());
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LibroDTO());
+    	}
+    	Libro libro = libroService.findById(idLibro);
+
+    	if (libro != null)
+    	{
+    		LibroDTO libroDTO= (LibroDTO) mapper.map(libro, LibroDTO.class);
+
+    		return ResponseEntity.status(HttpStatus.OK).body(libroDTO);
+    	} else {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new LibroDTO());
+    	}
+
 
     }
 
