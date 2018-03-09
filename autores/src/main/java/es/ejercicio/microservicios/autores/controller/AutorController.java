@@ -8,6 +8,8 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +42,9 @@ public class AutorController {
 
     @Autowired
     private AutorService autorService;
+
+    @Autowired
+    private Tracer tracer;
 
     /** DozerMapper. */
     DozerBeanMapper mapper = new DozerBeanMapper();
@@ -103,15 +108,26 @@ public class AutorController {
     		log.error("Se ha producido un error, el id no es un valor numerico:" + ex.getMessage());
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AutorDTO());
     	}
+
+    	Span s = tracer.createSpan("Autor");
+
+    	s.logEvent("Se obtiene el autor:" + idAutor);
+
     	Autor autor = autorService.findById(idAutor);
     	if (autor != null)
     	{
+    		s.logEvent("Autor Obtenido");
     		AutorDTO editorialDTO= (AutorDTO) mapper.map(autor, AutorDTO.class);
-
+    		tracer.addTag("AutorId", Integer.toString(autor.getId()));
+    		tracer.addTag("AutorNombre", autor.getNombre());
+    		tracer.close(s);
     		return ResponseEntity.status(HttpStatus.OK).body(editorialDTO);
     	} else {
+    		s.logEvent("Aurtor No Encontrado");
+    		tracer.close(s);
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AutorDTO());
     	}
+
 
     }
 
