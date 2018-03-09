@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 import es.ejercicio.microservicios.biblioteca.cliente.ClienteLibros;
+import es.ejercicio.microservicios.dto.EditorialDTO;
 import es.ejercicio.microservicios.dto.LibroDTO;
 
 
@@ -34,23 +35,28 @@ public class ControlLibros {
 		return clienteLibros.obtenerLibrosByExample(example);
 	}
 
+	@HystrixCommand(fallbackMethod="failObtenerLibro")
+	public LibroDTO obtenerLibro(String id) {
+		return clienteLibros.obtenerLibro(id);
+	}
+
 
 	public List<LibroDTO> failObtenerLibros(Throwable t) {
-		t.printStackTrace();
 
 		return new ArrayList<LibroDTO>() ;
     }
 
 	public List<LibroDTO> failObtenerLibrosFavoritos(Throwable t) {
-		t.printStackTrace();
 
 		return new ArrayList<LibroDTO>() ;
     }
 
 	public List<LibroDTO>  failObtenerLibrosByExample(LibroDTO input, Throwable t) {
-		t.printStackTrace();
 
         return new ArrayList<LibroDTO>() ;
     }
 
+	public LibroDTO failObtenerLibro(String id, Throwable t) {
+        return LibroDTO.builder().id(0).titulo("NO DISPONIBLE").build();
+    }
 }

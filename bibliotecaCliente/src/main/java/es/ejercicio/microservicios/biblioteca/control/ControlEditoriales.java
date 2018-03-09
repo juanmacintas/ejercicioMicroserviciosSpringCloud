@@ -36,16 +36,13 @@ public class ControlEditoriales {
 
 	public EditorialDTO failObtenerEditorial(String id, Throwable t) {
 		t.printStackTrace();
-
-        return EditorialDTO.builder().id(0).nombre("").build();
+        return EditorialDTO.builder().id(0).nombre("NO DISPONIBLE").build();
     }
 
 	public ResponseEntity<EditorialDTO> failNuevaEditorial(EditorialDTO input, Throwable t) {
-		t.printStackTrace();
-
         return ResponseEntity
         		.status(HttpStatus.NOT_FOUND)
-        		.body(EditorialDTO.builder().id(0).nombre("").build());
+        		.body(EditorialDTO.builder().id(0).nombre("NO DISPONIBLE").build());
     }
 
 	public void failEliminarEditorial(String id, Throwable t) {

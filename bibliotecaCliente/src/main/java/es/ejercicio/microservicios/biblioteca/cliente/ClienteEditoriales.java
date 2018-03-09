@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import es.ejercicio.microservicios.biblioteca.config.OAuth2FeignAutoConfiguration;
 import es.ejercicio.microservicios.dto.EditorialDTO;
 
-@FeignClient(name="editoriales")
+@FeignClient(name="editoriales",
+		configuration = {OAuth2FeignAutoConfiguration.class})
 public interface ClienteEditoriales {
 
    @RequestMapping(path = "/editoriales/getEditorial/{id}",

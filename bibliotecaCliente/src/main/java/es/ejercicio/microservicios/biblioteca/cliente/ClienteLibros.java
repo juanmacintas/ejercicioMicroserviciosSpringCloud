@@ -3,6 +3,7 @@ package es.ejercicio.microservicios.biblioteca.cliente;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,5 +25,9 @@ public interface ClienteLibros {
    @RequestMapping(path = "/libros/getByExample",
 	   		method = RequestMethod.POST)
    public List<LibroDTO>  obtenerLibrosByExample(@RequestBody LibroDTO input);
+
+   @RequestMapping(path = "/libros/getLibro/{id}",
+   		method = RequestMethod.GET)
+   public LibroDTO obtenerLibro(@PathVariable("id") String id);
 
 }

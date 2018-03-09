@@ -35,17 +35,13 @@ public class ControlAutores {
 	}
 
 	public AutorDTO failObtenerAutor(String id, Throwable t) {
-		t.printStackTrace();
-
-        return AutorDTO.builder().id(0).nombre("").build();
+        return AutorDTO.builder().id(0).nombre("NO DISPONIBLE").build();
     }
 
 	public ResponseEntity<AutorDTO> failNuevoAutor(AutorDTO input, Throwable t) {
-		t.printStackTrace();
-
         return ResponseEntity
         		.status(HttpStatus.NOT_FOUND)
-        		.body(AutorDTO.builder().id(0).nombre("").build());
+        		.body(AutorDTO.builder().id(0).nombre("NO DISPONIBLE").build());
     }
 
 	public void failEliminarAutor(String id, Throwable t) {

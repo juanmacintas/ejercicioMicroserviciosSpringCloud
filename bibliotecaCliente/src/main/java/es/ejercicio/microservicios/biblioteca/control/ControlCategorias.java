@@ -35,17 +35,13 @@ public class ControlCategorias {
 	}
 
 	public CategoriaDTO failObtenerCategoria(String id, Throwable t) {
-		t.printStackTrace();
-
-        return CategoriaDTO.builder().id(0).nombre("").build();
+        return CategoriaDTO.builder().id(0).nombre("NO DISPONIBLE").build();
     }
 
 	public ResponseEntity<CategoriaDTO> failNuevaCategoria(CategoriaDTO input, Throwable t) {
-		t.printStackTrace();
-
-        return ResponseEntity
+       return ResponseEntity
         		.status(HttpStatus.NOT_FOUND)
-        		.body(CategoriaDTO.builder().id(0).nombre("").build());
+        		.body(CategoriaDTO.builder().id(0).nombre("NO DISPONIBLE").build());
     }
 
 	public void failEliminarCategoria(String id, Throwable t) {
