@@ -5,6 +5,9 @@ INSERT INTO oauth_client_details
 VALUES
 	('bibliotecaApp', 'secretBiblioteca', 'foo,read,write', 'password,authorization_code,refresh_token,client_credentials', null, null, 36000, 36000, null, true),
 	('editorialesApp', 'secretEditoriales', 'foo,read,write', 'password,authorization_code,refresh_token,client_credentials', null, null, 36000, 36000, null, true),
+	('autoresApp', 'secretAutores', 'foo,read,write', 'password,authorization_code,refresh_token,client_credentials', null, null, 36000, 36000, null, true),
+  ('categoriasApp', 'secretCategorias', 'foo,read,write', 'password,authorization_code,refresh_token,client_credentials', null, null, 36000, 36000, null, true),
+  ('librosApp', 'secretLibros', 'foo,read,write', 'password,authorization_code,refresh_token,client_credentials', null, null, 36000, 36000, null, true),
 	('barClientIdPassword', 'secret', 'bar,read,write', 'password,authorization_code,refresh_token,client_credentials', null, null, 36000, 36000, null, true),
 	('foo', 'foosecret', 'openid', 'password,authorization_code,refresh_token,client_credentials', null, null, 36000, 36000, null, true);
 
