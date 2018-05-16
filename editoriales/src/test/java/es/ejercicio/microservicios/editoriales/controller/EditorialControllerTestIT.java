@@ -2,6 +2,7 @@ package es.ejercicio.microservicios.editoriales.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.URI;
 import java.net.URL;
 
 import org.junit.Before;
@@ -13,14 +14,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.gson.Gson;
 
-import es.ejercicio.microservicios.dto.AutorDTO;
 import es.ejercicio.microservicios.dto.EditorialDTO;
+import es.ejercicio.microservicios.dto.OAuthDTO;
 
 
 /**
@@ -38,6 +41,7 @@ public class EditorialControllerTestIT {
 	private URL baseById;
 	private URL baseNuevaEditorial;
 	private URL baseEliminarEditorial;
+	private URL baseToken;
 
 	@Autowired
 	private TestRestTemplate template;
@@ -46,9 +50,19 @@ public class EditorialControllerTestIT {
 	private final String NOMBRE_SERVICIO_BY_ID= "editoriales/getEditorial/1";
 	private final String NOMBRE_SERVICIO_NUEVO= "editoriales/nuevaEditorial";
 	private final String NOMBRE_SERVICIO_ELIMINAR= "editoriales/deleteEditorial/2";
+	private final String NOMBRE_SERVICIO_TOKEN= "/uaa/oauth/token";
 
 	private final String STATUS_OK = "200";
-	private final Integer NUM_TOTAL_EDITORIALES = 5;
+	private final Integer PORT_AUTHORIZATION_SERVER = 9000;
+	private final Integer NUM_TOTAL_EDITORIALES = 11;
+
+	private String token;
+
+	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String BEARER = "Bearer ";
+	private static final String CLIENT_ID = "client_id";
+	private static final String CLIENT_SECRET = "client_secret";
+	private static final String GRANT_TYPE = "grant_type";
 
 	@Before
 	public void setUp() throws Exception {
@@ -56,25 +70,20 @@ public class EditorialControllerTestIT {
 	     this.baseById = new URL("http://localhost:" + port + "/"+ NOMBRE_SERVICIO_BY_ID);
 	     this.baseNuevaEditorial = new URL("http://localhost:" + port + "/"+ NOMBRE_SERVICIO_NUEVO);
 	     this.baseEliminarEditorial = new URL("http://localhost:" + port + "/"+ NOMBRE_SERVICIO_ELIMINAR);
+	     this.baseToken = new URL("http://localhost:" + PORT_AUTHORIZATION_SERVER + "/"+ NOMBRE_SERVICIO_TOKEN);
+	     //Se obtiene un token para las pruebas
+	     token = getAccessToken();
 	}
-
-	@Test
-	public void getListEditoriales() throws Exception {
-
-
-	     ResponseEntity<Object[]> response = template.getForEntity(base.toString(), Object[].class);
-
-	     assertEquals(STATUS_OK, response.getStatusCode().toString());
-	     Object[] objects = response.getBody();
-	     assertEquals(NUM_TOTAL_EDITORIALES.intValue(), objects.length);
-
-	 }
 
 	@Test
 	public void getEditorialById() throws Exception {
 
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add(AUTHORIZATION_HEADER,BEARER.concat(token));
 
-	     ResponseEntity<EditorialDTO> response = template.getForEntity(baseById.toString(), EditorialDTO.class);
+	     ResponseEntity<EditorialDTO> response = template.exchange(baseById.toString(), HttpMethod.GET,
+															new HttpEntity<>(headers), EditorialDTO.class);
 
 	     assertEquals(STATUS_OK, response.getStatusCode().toString());
 	     EditorialDTO editorial = (EditorialDTO) response.getBody();
@@ -89,20 +98,22 @@ public class EditorialControllerTestIT {
 
 		Gson gson = new Gson();
 
-		EditorialDTO editorial = EditorialDTO.builder().id(6)
-						.nombre("Autor 6")
+		EditorialDTO editorial = EditorialDTO.builder().id(12)
+						.nombre("Autor 12")
 						.build();
 		String json = gson.toJson(editorial);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add(AUTHORIZATION_HEADER,BEARER.concat(token));
+
 		HttpEntity<String> entity = new HttpEntity<String>(json,headers);
 
 	     ResponseEntity<EditorialDTO> response = template.postForEntity(baseNuevaEditorial.toString(),entity,
 	    		 EditorialDTO.class);
 
 	     assertEquals(STATUS_OK, response.getStatusCode().toString());
-	     assertEquals(6,response.getBody().getId());
+	     assertEquals(12,response.getBody().getId());
 
 	     testSelectAll(total + 1);
 
@@ -113,15 +124,25 @@ public class EditorialControllerTestIT {
 
 		Integer total = getTotal();
 
-	     template.delete(baseEliminarEditorial.toString());
 
+	    HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add(AUTHORIZATION_HEADER,BEARER.concat(token));
 
-	     testSelectAll(total - 1);
+		ResponseEntity<String> status = template.exchange(baseEliminarEditorial.toString(), HttpMethod.DELETE,
+				new HttpEntity<>(headers),String.class);
+		assertEquals(STATUS_OK, status.getStatusCode().toString());
+
+	    testSelectAll(total - 1);
 
 	 }
 
 	private void testSelectAll(Integer totalEsperado) {
-	     ResponseEntity<Object[]> response = template.getForEntity(base.toString(), Object[].class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(AUTHORIZATION_HEADER, BEARER.concat(token));
+
+		ResponseEntity<Object[]> response = template.exchange(base.toString(), HttpMethod.GET,
+								new HttpEntity<>(headers), Object[].class);
 
 	     assertEquals(STATUS_OK, response.getStatusCode().toString());
 	     Object[] objects = response.getBody();
@@ -130,11 +151,36 @@ public class EditorialControllerTestIT {
 	}
 
 	private int getTotal() {
-	     ResponseEntity<Object[]> response = template.getForEntity(base.toString(), Object[].class);
+		 HttpHeaders headers = new HttpHeaders();
+		 headers.add(AUTHORIZATION_HEADER, BEARER.concat(token));
+
+	     ResponseEntity<Object[]> response = template.exchange(base.toString(), HttpMethod.GET,
+	    		 								new HttpEntity<>(headers), Object[].class);
 
 	     assertEquals(STATUS_OK, response.getStatusCode().toString());
 	     Object[] objects = response.getBody();
 	     return objects.length;
 	}
+
+	private String getAccessToken() {
+		HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_JSON);
+
+	    HttpEntity<String> request = new HttpEntity<String>(headers);
+
+	    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseToken.toString())
+                .queryParam(CLIENT_ID, "editorialesApp")
+                .queryParam(CLIENT_SECRET, "secretEditoriales")
+                .queryParam(GRANT_TYPE, "client_credentials");
+
+	    URI myUri=builder.buildAndExpand().toUri();
+
+	    ResponseEntity<OAuthDTO> response = template.postForEntity(myUri, request, OAuthDTO.class);
+
+	    OAuthDTO autenticacion = (OAuthDTO) response.getBody();
+
+	    System.out.println("TOKEN:" + autenticacion);
+	 return autenticacion.getAccess_token();
+}
 
 }
