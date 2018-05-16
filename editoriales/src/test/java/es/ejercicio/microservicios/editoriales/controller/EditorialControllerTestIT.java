@@ -54,7 +54,6 @@ public class EditorialControllerTestIT {
 
 	private final String STATUS_OK = "200";
 	private final Integer PORT_AUTHORIZATION_SERVER = 9000;
-	private final Integer NUM_TOTAL_EDITORIALES = 11;
 
 	private String token;
 
@@ -179,7 +178,7 @@ public class EditorialControllerTestIT {
 
 	    OAuthDTO autenticacion = (OAuthDTO) response.getBody();
 
-	    System.out.println("TOKEN:" + autenticacion);
+
 	 return autenticacion.getAccess_token();
 }
 
