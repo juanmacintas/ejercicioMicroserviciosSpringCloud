@@ -109,15 +109,15 @@ public class CategoriaController {
 		notes = "Elimina la Categoría del id especificado",
 		response = HttpStatus.class)
     public HttpStatus deleteCategoria(@ApiParam(name = "id", value = "Id de la Categoría a eliminar", required = true) @PathVariable("id") String id) throws SQLException {
-    	Integer idAutor = 0;
+    	Integer idCategoria = 0;
     	try
     	{
-    		idAutor = Integer.parseInt(id);
+    		idCategoria = Integer.parseInt(id);
     	} catch (NumberFormatException ex) {
     		log.error("Se ha producido un error, el id no es un valor numerico:" + ex.getMessage());
     		return HttpStatus.NOT_FOUND;
     	}
-    	categoriaService.deleteById(idAutor);
+    	categoriaService.deleteById(idCategoria);
 
        	return HttpStatus.OK;
     }

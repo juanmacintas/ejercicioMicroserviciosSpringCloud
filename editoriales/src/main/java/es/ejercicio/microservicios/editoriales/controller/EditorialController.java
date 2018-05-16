@@ -50,7 +50,7 @@ public class EditorialController {
 	  notes = "Retorna todos las editoriales almacenados en base de datos",
 	  response = EditorialDTO.class,
 	  responseContainer = "List")
-@ApiResponses(value = {@ApiResponse(code = 200, message = "Editoriales retornadas correctamente")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Editoriales retornadas correctamente")})
     public List<EditorialDTO> getAll(Authentication authentication) throws SQLException {
 
     	List<Editorial> editoriales = editorialService.findAll();
@@ -111,15 +111,15 @@ public class EditorialController {
 			notes = "Elimina la Editorial del id especificado",
 			response = HttpStatus.class)
     public HttpStatus deleteEditorial(@ApiParam(name = "id", value = "Id del Autor a eliminar", required = true)@PathVariable("id") String id) throws SQLException {
-    	Integer idAutor = 0;
+    	Integer idEditorial = 0;
     	try
     	{
-    		idAutor = Integer.parseInt(id);
+    		idEditorial = Integer.parseInt(id);
     	} catch (NumberFormatException ex) {
     		log.error("Se ha producido un error, el id no es un valor numerico:" + ex.getMessage());
     		return HttpStatus.NOT_FOUND;
     	}
-    	editorialService.deleteById(idAutor);
+    	editorialService.deleteById(idEditorial);
 
        	return HttpStatus.OK;
     }

@@ -180,6 +180,6 @@ public class EditorialControllerTestIT {
 
 
 	 return autenticacion.getAccess_token();
-}
+	}
 
 }
