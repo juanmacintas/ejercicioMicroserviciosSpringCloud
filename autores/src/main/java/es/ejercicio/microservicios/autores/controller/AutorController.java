@@ -100,6 +100,7 @@ public class AutorController {
     					   @ApiResponse(code = 200, message = "Autor encontrado")}
     						)
     public ResponseEntity<AutorDTO> getAutor(@ApiParam(name = "id", value = "Id del Autor a buscar", required = true) @PathVariable("id") String id) throws SQLException {
+    	log.debug("Llamada a getAutor para el id:" + id);
     	Integer idAutor = 0;
     	try
     	{
@@ -109,22 +110,24 @@ public class AutorController {
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AutorDTO());
     	}
 
-    	Span s = tracer.createSpan("Autor");
+    	//Span s = tracer.createSpan("Autor");
 
-    	s.logEvent("Se obtiene el autor:" + idAutor);
-
+    	//s.logEvent("Se obtiene el autor:" + idAutor);
+    	log.debug("Se busca el autor " + idAutor + " en base de datos.");
     	Autor autor = autorService.findById(idAutor);
     	if (autor != null)
     	{
-    		s.logEvent("Autor Obtenido");
-    		AutorDTO editorialDTO= (AutorDTO) mapper.map(autor, AutorDTO.class);
-    		tracer.addTag("AutorId", Integer.toString(autor.getId()));
-    		tracer.addTag("AutorNombre", autor.getNombre());
-    		tracer.close(s);
-    		return ResponseEntity.status(HttpStatus.OK).body(editorialDTO);
+    		log.debug("Autor Obtenido");
+    		//s.logEvent("Autor Obtenido");
+    		AutorDTO autorDTO= (AutorDTO) mapper.map(autor, AutorDTO.class);
+    		//tracer.addTag("AutorId", Integer.toString(autor.getId()));
+    		//tracer.addTag("AutorNombre", autor.getNombre());
+    		//tracer.close(s);
+    		log.debug("Autor retornado:" + autorDTO);
+    		return ResponseEntity.status(HttpStatus.OK).body(autorDTO);
     	} else {
-    		s.logEvent("Aurtor No Encontrado");
-    		tracer.close(s);
+    		//s.logEvent("Autor No Encontrado");
+    		//tracer.close(s);
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AutorDTO());
     	}
 
