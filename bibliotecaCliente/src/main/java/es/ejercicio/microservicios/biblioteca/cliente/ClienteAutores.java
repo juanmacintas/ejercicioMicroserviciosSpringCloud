@@ -7,14 +7,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import es.ejercicio.microservicios.biblioteca.config.OAuth2FeignAutoConfiguration;
 import es.ejercicio.microservicios.dto.AutorDTO;
 
-@FeignClient(name="autores")
+@FeignClient(name="autores",
+			configuration = {OAuth2FeignAutoConfiguration.class})
 public interface ClienteAutores {
 
    @RequestMapping(path = "/autores/getAutor/{id}",
     		method = RequestMethod.GET)
-    public AutorDTO obtenerAutor(@PathVariable("id") String id);
+    public ResponseEntity<AutorDTO> obtenerAutor(@PathVariable("id") String id);
 
    @RequestMapping(path = "/autores/nuevoAutor",
    		method = RequestMethod.POST)

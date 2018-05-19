@@ -165,9 +165,9 @@ public class BibliotecaController {
 
 	private LibroBibliotecaDTO obtenerValoresLibro(LibroDTO libro) {
 		log.debug("Se obtienen los datos del libro:" + libro);
-		CategoriaDTO categoria = controlCategorias.obtenerCategoria(libro.getCategoria().toString());
+		ResponseEntity<AutorDTO> autor = controlAutores.obtenerAutor(libro.getAutor().toString());
 		EditorialDTO editorial = controlEditoriales.obtenerEditorial(libro.getEditorial().toString());
-		AutorDTO autor = controlAutores.obtenerAutor(libro.getAutor().toString());
+		CategoriaDTO categoria = controlCategorias.obtenerCategoria(libro.getCategoria().toString());
 
 		return LibroBibliotecaDTO.builder()
 							.id(libro.getId())
@@ -175,7 +175,7 @@ public class BibliotecaController {
 							.descripcion(libro.getDescripcion())
 							.categoria(categoria.getNombre())
 							.editorial(editorial.getNombre())
-							.autor(autor.getNombre())
+							.autor(autor.getBody().getNombre())
 							.build();
   }
 

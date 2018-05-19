@@ -10,6 +10,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 import es.ejercicio.microservicios.biblioteca.cliente.ClienteAutores;
 import es.ejercicio.microservicios.dto.AutorDTO;
+import feign.Response;
 
 
 @Component
@@ -19,7 +20,7 @@ public class ControlAutores {
 	ClienteAutores clienteAutores;
 
 	@HystrixCommand(fallbackMethod="failObtenerAutor")
-	public AutorDTO obtenerAutor(String id) {
+	public ResponseEntity<AutorDTO> obtenerAutor(String id) {
 		return clienteAutores.obtenerAutor(id);
 	}
 
@@ -34,8 +35,9 @@ public class ControlAutores {
 		 clienteAutores.eliminarAutor(id);
 	}
 
-	public AutorDTO failObtenerAutor(String id, Throwable t) {
-        return AutorDTO.builder().id(0).nombre("NO DISPONIBLE").build();
+	public ResponseEntity<AutorDTO> failObtenerAutor(String id, Throwable t) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+        		AutorDTO.builder().id(0).nombre("NO DISPONIBLE").build());
     }
 
 	public ResponseEntity<AutorDTO> failNuevoAutor(AutorDTO input, Throwable t) {
