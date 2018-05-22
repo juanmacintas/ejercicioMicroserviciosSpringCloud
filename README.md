@@ -18,7 +18,7 @@ Microservices demo using Spring Boot, Spring Cloud Config, Eureka, Feign, Hystri
   * Autores - Microservicio mantenimiento entidad autores.
   * Biblioteca - Microservicio biblioteca.
  
- * Contiene 2 librerías de utilidades.
+* Contiene 2 librerías de utilidades.
   * ejercicio-dto - Contiene todos los contratos de entrada/salida de los distintos REST usados. Todos los microservicios de la biblioteca 
   lo importan.
   * BibliotecaCliente - Interfaz Feing y Controlador de error con Hystrix implementado para las distintas llamadas a los microservicios. 
