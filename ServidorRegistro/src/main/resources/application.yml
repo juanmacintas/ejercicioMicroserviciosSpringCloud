@@ -6,8 +6,6 @@ eureka:
     hostname: localhost
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
 
   client:
     register-with-eureka: false
