@@ -1,4 +1,4 @@
-package com.accenture.java.zuulservice;
+package es.ejercicio.microservicios.zuul;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ZuulServiceApplicationTests {
+public class ServicioZuulApplicationTests {
 
 	@Test
 	public void contextLoads() {
