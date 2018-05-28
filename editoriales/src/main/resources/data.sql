@@ -8,5 +8,5 @@ INSERT INTO EDITORIAL (id, nombre) values (7,'e-artnow');
 INSERT INTO EDITORIAL (id, nombre) values (8,'Nova');
 INSERT INTO EDITORIAL (id, nombre) values (9,'Booket');
 INSERT INTO EDITORIAL (id, nombre) values (10,'EDHASA');
-INSERT INTO EDITORIAL (id, nombre) values (11,'Planeta DeAgostini Cómics');
+INSERT INTO EDITORIAL (id, nombre) values (11,'Planeta DeAgostini CÃ³mics');
 
