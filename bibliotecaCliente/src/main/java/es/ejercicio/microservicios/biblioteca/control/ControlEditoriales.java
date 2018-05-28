@@ -1,5 +1,8 @@
 package es.ejercicio.microservicios.biblioteca.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 import es.ejercicio.microservicios.biblioteca.cliente.ClienteEditoriales;
+import es.ejercicio.microservicios.dto.AutorDTO;
 import es.ejercicio.microservicios.dto.EditorialDTO;
 
 
@@ -17,6 +21,11 @@ public class ControlEditoriales {
 
 	@Autowired
 	ClienteEditoriales clienteEditoriales;
+
+	@HystrixCommand(fallbackMethod="failObtenerEditoriales")
+	public List<EditorialDTO> obtenerEditoriales() {
+		return clienteEditoriales.obtenerEditoriales();
+	}
 
 	@HystrixCommand(fallbackMethod="failObtenerEditorial")
 	public EditorialDTO obtenerEditorial(String id) {
@@ -33,6 +42,10 @@ public class ControlEditoriales {
 	public void eliminarEditorial(String id) {
 		clienteEditoriales.eliminarEditorial(id);
 	}
+
+	public List<EditorialDTO> failObtenerEditoriales(Throwable t) {
+        return new ArrayList<EditorialDTO>();
+    }
 
 	public EditorialDTO failObtenerEditorial(String id, Throwable t) {
 		t.printStackTrace();

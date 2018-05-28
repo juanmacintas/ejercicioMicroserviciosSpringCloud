@@ -89,6 +89,60 @@ public class BibliotecaController {
     }
 
     /**
+     * Retorna todos los autores
+     * @return Listado de autores
+     * @throws SQLException
+     */
+    @RequestMapping(value = "/getAutores", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todos los autores",
+	  notes = "Retorna todos los autores almacenados en base de datos",
+	  response = AutorDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Autores retornados correctamente")})
+    public List<AutorDTO> getAllAutores() throws SQLException {
+
+
+		List<AutorDTO> listaAutores = controlAutores.obtenerAutores();
+		return listaAutores;
+    }
+
+    /**
+     * Retorna todos las categorias
+     * @return Listado de categorias
+     * @throws SQLException
+     */
+    @RequestMapping(value = "/getCategorias", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todas las categorias",
+	  notes = "Retorna todos las categorias almacenadas en base de datos",
+	  response = LibroBibliotecaDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Categorias retornadas correctamente")})
+    public List<CategoriaDTO> getAllCategorias() throws SQLException {
+
+
+		List<CategoriaDTO> listaCategorias = controlCategorias.obtenerCategorias();
+		return listaCategorias;
+    }
+
+    /**
+     * Retorna todos las editoriales
+     * @return Listado de editoriales
+     * @throws SQLException
+     */
+    @RequestMapping(value = "/getEditoriales", method = RequestMethod.GET)
+    @ApiOperation(value = "Retorna todas las editoriales",
+	  notes = "Retorna todos las editoriales almacenadas en base de datos",
+	  response = LibroBibliotecaDTO.class,
+	  responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Editoriales retornadas correctamente")})
+    public List<EditorialDTO> getAllEditoriales() throws SQLException {
+
+
+		List<EditorialDTO> listaEditoriales = controlEditoriales.obtenerEditoriales();
+		return listaEditoriales;
+    }
+
+    /**
      * Elimina el Autor
      * @throws SQLException
      */

@@ -3,7 +3,7 @@ Microservices demo using Spring Boot, Spring Cloud Config, Eureka, Feign, Hystri
 
 # Ejercicio Microservicios Spring Cloud
 
-* Contiene 11 microservicios distintos.
+* Contiene 12 microservicios distintos.
   * Servidor Configuración (Spring Cloud Config) Microservicio encargado de proveer los ficheros de configuración al resto de microservicios.
   * Servidor Registro (Eureka) Servicio donde se registra el resto de microservicios. Su url de acceso es http://localhost:8084/
   * Servidor Autorización (Oauth2 Authorization Server). Servidor que valida los accesos a los microservicios. Contiene una base de datos 
@@ -17,7 +17,8 @@ Microservices demo using Spring Boot, Spring Cloud Config, Eureka, Feign, Hystri
   * Editoriales - Microservicio mantenimiento entidad editoriales.
   * Autores - Microservicio mantenimiento entidad autores.
   * Biblioteca - Microservicio biblioteca.(Microservicio Edge que accede al resto de microservicios)
-  * ServicioZuul - Proxy Inverso con entrada a la aplicación. Tiene parametrizado el microservicio Biblioteca.                                  
+  * ServicioZuul - Proxy Inverso con entrada a la aplicación. Tiene parametrizado el microservicio Biblioteca.
+  * BibliotecaVaadin - Frontal Web Vaadin para visualizar la información. Hace uso del servidio Edge de Bilioteca para el acceso a datos. Su url de acceso es http://localhost:8086/
  
 * Contiene 2 librerías de utilidades.
   * ejercicio-dto - Contiene todos los contratos de entrada/salida de los distintos REST usados. Todos los microservicios de la biblioteca 

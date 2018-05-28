@@ -1,5 +1,8 @@
 package es.ejercicio.microservicios.biblioteca.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,11 @@ public class ControlCategorias {
 	@Autowired
 	ClienteCategorias clienteCategorias;
 
+	@HystrixCommand(fallbackMethod="failObtenerCategorias")
+	public List<CategoriaDTO> obtenerCategorias() {
+		return clienteCategorias.obtenerCategorias();
+	}
+
 	@HystrixCommand(fallbackMethod="failObtenerCategoria")
 	public CategoriaDTO obtenerCategoria(String id) {
 		return clienteCategorias.obtenerCategoria(id);
@@ -33,6 +41,10 @@ public class ControlCategorias {
 	public void eliminarCategoria(String id) {
 		clienteCategorias.eliminarCategoria(id);
 	}
+
+	public List<CategoriaDTO> failObtenerCategorias(Throwable t) {
+        return new ArrayList<CategoriaDTO>();
+    }
 
 	public CategoriaDTO failObtenerCategoria(String id, Throwable t) {
         return CategoriaDTO.builder().id(0).nombre("NO DISPONIBLE").build();

@@ -1,5 +1,7 @@
 package es.ejercicio.microservicios.biblioteca.cliente;
 
+import java.util.List;
+
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +15,10 @@ import es.ejercicio.microservicios.dto.CategoriaDTO;
 @FeignClient(name="categorias",
 	configuration = {OAuth2FeignAutoConfiguration.class})
 public interface ClienteCategorias {
+
+  @RequestMapping(path = "/categorias/getAll",
+	   		method = RequestMethod.GET)
+  public List<CategoriaDTO> obtenerCategorias();
 
    @RequestMapping(path = "/categorias/getCategoria/{id}",
     		method = RequestMethod.GET)
