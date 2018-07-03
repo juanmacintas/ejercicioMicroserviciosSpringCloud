@@ -7,9 +7,7 @@ spring:
       server: 
         git:
           uri: https://github.com/juanmacintas/ejercicioMircroserviciosConfigRepo
-          searchPaths: autores*
-#  profiles:
-#    active: test,dev
+          searchPaths: autores,autorizacion,biblioteca,bibliotecavaadin,libros,categorias,editoriales,zuul,zipkin*
 
 endpoints:
   beans:

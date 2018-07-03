@@ -25,6 +25,9 @@
 		<ejercicio-dto.version>0.0.1-SNAPSHOT</ejercicio-dto.version>
 		<dozer.version>5.5.1</dozer.version>
 		<spring-cloud.version>Dalston.SR4</spring-cloud.version>
+		<project.build.finalName>${project.name}</project.build.finalName>
+		<maven-docker-fabric8.version>0.23.0</maven-docker-fabric8.version>
+		<artifact.extension>jar</artifact.extension>
 	</properties>
 
 	<dependencies>
@@ -104,7 +107,84 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>${maven-docker-fabric8.version}</version>
+						<configuration>
+							<logDate>medium</logDate>
+							<images>
+								<image>
+									<name>${project.name}:${project.version}</name>
+									<alias>${project.name}</alias>
+									<build>
+										<from>java:8u40</from>
+										<assembly>
+											<descriptorRef>artifact-with-dependencies</descriptorRef>
+										</assembly>
+										<cmd>java -Djava.security.egd=file:/dev/./urandom -jar -Xdebug /maven/${project.build.finalName}.${artifact.extension}</cmd>
+									</build>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-image</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>build</goal>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.17</version>
+						<executions>
+							<execution>
+								<id>integration-test</id>
+								<goals>
+									<goal>integration-test</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>verify</id>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<plugin>
